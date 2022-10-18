@@ -1,7 +1,23 @@
 const http = require('http');
 
 const server = http.createServer((request, response) => {
-  console.log([request.url, request.method, request.headers]);
+  const { url } = request;
+
+  if (url === '/') {
+    response.write(`<html>
+      <head>
+        <title>Enter message</title>
+        <body>
+          <form>
+            <input type="text" action="/message" method="POST" name="message" />
+            <button type="submit">Send</button>
+          </form>
+        </body>
+      </head>
+    </html>`);
+    return response.end();
+  }
+
   response.setHeader('Content-Type', 'text/html');
   response.write(`<html>
     <head>
@@ -9,7 +25,8 @@ const server = http.createServer((request, response) => {
       <body><h1>Hello from my node server!</h1></body>
     </head>
   </html>`);
-  response.end();
+
+  return response.end();
 });
 
 server.listen(3000);
