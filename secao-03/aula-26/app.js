@@ -1,11 +1,21 @@
 const http = require('http');
 const fs = require('fs');
 
-const server = http.createServer((request, response) => {
-  const { url, method } = request;
+function messagePost(request, response) {
+  const body = [];
+  request.on('data', (chunk) => body.push(chunk));
+  return request.on('end', () => {
+    const parsedBody = Buffer.concat(body).toString();
+    const message = parsedBody.split('=')[1];
+    fs.writeFileSync('message.txt', message);
+    response.statusCode = 302;
+    response.setHeader('Location', '/');
+    return response.end();
+  });
+}
 
-  if (url === '/') {
-    response.write(`<html>
+function homePage(response) {
+  response.write(`<html>
       <head>
         <title>Enter message</title>
         <body>
@@ -16,22 +26,10 @@ const server = http.createServer((request, response) => {
         </body>
       </head>
     </html>`);
-    return response.end();
-  }
+  return response.end();
+}
 
-  if (url === '/message' && method === 'POST') {
-    const body = [];
-    request.on('data', (chunk) => body.push(chunk));
-    request.on('end', () => {
-      const parsedBody = Buffer.concat(body).toString();
-      const message = parsedBody.split('=')[1];
-      fs.writeFileSync('message.txt', message);
-    });
-    response.statusCode = 302;
-    response.setHeader('Location', '/');
-    return response.end();
-  }
-
+function defaultPage(response) {
   response.setHeader('Content-Type', 'text/html');
   response.write(`<html>
     <head>
@@ -41,6 +39,20 @@ const server = http.createServer((request, response) => {
   </html>`);
 
   return response.end();
+}
+
+const server = http.createServer((request, response) => {
+  const { url, method } = request;
+
+  if (url === '/') {
+    return homePage(response);
+  }
+
+  if (url === '/message' && method === 'POST') {
+    return messagePost(request, response);
+  }
+
+  return defaultPage(response);
 });
 
 server.listen(3000);
