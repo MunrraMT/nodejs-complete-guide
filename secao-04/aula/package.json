@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./src/server.js",
-    "start-server": "nodemon ./src/server.js"
+    "server:dev": "nodemon ./src/server.js",
+    "server:prod": "pm2 start ./src/server.js --watch"
   },
   "keywords": [],
   "author": "",
@@ -20,5 +21,8 @@
     "eslint-plugin-prettier": "4.x",
     "nodemon": "2.x",
     "prettier": "2.x"
+  },
+  "dependencies": {
+    "pm2": "^5.2.2"
   }
 }
