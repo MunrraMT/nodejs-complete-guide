@@ -3,6 +3,7 @@ function homePage(response) {
       <head>
         <title>Enter message</title>
         <body>
+          <h1>HomePage</h1>
           <form action="/message" method="POST">
             <input type="text" name="message" />
             <button type="submit">Send</button>
