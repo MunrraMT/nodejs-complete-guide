@@ -1,19 +1,23 @@
 /* eslint-disable */
 
 const app = require('express')();
+const bodyParser = require('body-parser');
 
-app.use('/', (request, response, next) => {
-  console.log('always!');
-  next();
-});
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/add-product', (request, response, next) => {
-  console.log('Middleware 2');
-  response.send('<h1>add-product!</h1>');
+  response.send(
+    '<form action="/product" method="POST"><input type="text" name="title" /><button type="submit">Add product</button></form>',
+  );
+});
+
+app.use('/product', (request, response) => {
+  const { title } = request.body;
+  console.log(title);
+  response.redirect('/');
 });
 
 app.use('/', (request, response, next) => {
-  console.log('Middleware 3');
   response.send('<h1>Testando!</h1>');
 });
 
