@@ -1,10 +1,6 @@
 /* eslint-disable */
 
-const http = require('http');
-const express = require('express');
-const routes = require('./routes');
-
-const app = express();
+const app = require('express')();
 
 app.use((request, response, next) => {
   console.log('Middleware 1');
@@ -16,12 +12,6 @@ app.use((request, response, next) => {
   response.send('<h1>Testando!</h1>');
 });
 
-// app.listen(3000, () => {
-//   console.log('Server init - http://localhost:3000/');
-// });
-
-const server = http.createServer(app);
-
-server.listen(3000, () => {
+app.listen(3000, () => {
   console.log('Server init - http://localhost:3000/');
 });
