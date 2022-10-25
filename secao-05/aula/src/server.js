@@ -13,6 +13,7 @@ app.use((request, response, next) => {
 
 app.use((request, response, next) => {
   console.log('Middleware 2');
+  response.send('<h1>Testando!</h1>');
 });
 
 // app.listen(3000, () => {
