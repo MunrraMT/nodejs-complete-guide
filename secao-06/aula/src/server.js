@@ -3,14 +3,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const { engine } = require('express-handlebars');
-
-const app = express();
+const { engine: hbsEngine } = require('express-handlebars');
 
 const adminData = require('./routes/admin');
 const shopRouter = require('./routes/shop');
 
-app.engine('hbs', engine({ extname: '.hbs', defaultLayout: false }));
+const app = express();
+
+app.engine('hbs', hbsEngine({ extname: '.hbs', defaultLayout: false }));
 app.set('view engine', 'hbs');
 
 // app.set('view engine', 'pug');

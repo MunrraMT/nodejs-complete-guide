@@ -10,6 +10,7 @@ router.get('/', (request, response) => {
   const { products } = adminData;
   response.render('shop', {
     productList: products,
+    hasProducts: products.length > 0,
     docTitle: 'Shop Page',
     path: '/',
   });
