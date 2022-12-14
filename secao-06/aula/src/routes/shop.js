@@ -13,6 +13,8 @@ router.get('/', (request, response) => {
     hasProducts: products.length > 0,
     docTitle: 'Shop Page',
     path: '/',
+    activeShop: true,
+    productCSS: true,
   });
 });
 
