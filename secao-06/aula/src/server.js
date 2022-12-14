@@ -37,7 +37,15 @@ app.use('/admin', adminData.routes);
 app.use(shopRouter);
 
 app.use('/', (request, response) => {
-  response.status(404).render('404', { docTitle: '404' });
+  response
+    .status(404)
+    .render('404', {
+      docTitle: '404',
+      activeShop: false,
+      activeAddProduct: false,
+      formsCSS: false,
+      productCSS: false,
+    });
 });
 
 app.listen(3000, () => {
