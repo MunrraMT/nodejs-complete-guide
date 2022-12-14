@@ -3,23 +3,28 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const { engine: hbsEngine } = require('express-handlebars');
+// const { engine: hbsEngine } = require('express-handlebars'); // handlebars
 
 const adminData = require('./routes/admin');
 const shopRouter = require('./routes/shop');
 
 const app = express();
 
-app.engine(
-  'hbs',
-  hbsEngine({
-    extname: '.hbs',
-    layoutsDir: 'src/views/layouts/',
-    defaultLayout: 'main-layout',
-  }),
-);
-app.set('view engine', 'hbs');
+// EJS
+app.set('view engine', 'ejs');
 
+// handlebars
+// app.engine(
+//   'hbs',
+//   hbsEngine({
+//     extname: '.hbs',
+//     layoutsDir: 'src/views/layouts/',
+//     defaultLayout: 'main-layout',
+//   }),
+// );
+// app.set('view engine', 'hbs');
+
+// Pug
 // app.set('view engine', 'pug');
 
 app.set('views', 'src/views');
