@@ -1,0 +1,28 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+main {
+  padding: 0 30px;
+}
+
+nav {
+  height: 30px;
+  padding: 20px;
+  background: rgb(84, 84, 168);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+nav a {
+  color: #fff;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+nav a.active {
+  font-weight: 700;
+}
