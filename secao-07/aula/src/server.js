@@ -18,14 +18,14 @@ app.engine(
 app.set('view engine', 'hbs');
 app.set('views', 'src/views/pages');
 
-const adminData = require('./routes/admin');
-const shopData = require('./routes/shop');
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
-app.use('/admin', adminData.routes);
-app.use(shopData.routes);
+app.use('/admin', adminRoutes);
+app.use(shopRoutes);
 
 app.use('/', (request, response) => {
   const data = {
