@@ -8,7 +8,7 @@ module.exports = class Product {
     this.title = title;
   }
 
-  save() {
+  save(callBack) {
     fs.readFile(pathToDB, (readError, fileContent) => {
       let products = [];
 
@@ -18,15 +18,20 @@ module.exports = class Product {
 
       products.push(this);
       fs.writeFile(pathToDB, JSON.stringify(products), (writeError) => {
-        console.log(writeError);
+        if (writeError) {
+          console.log(writeError);
+          callBack('error');
+        }
+
+        callBack('success');
       });
     });
   }
 
-  static fetchAll() {
+  static fetchAll(callBack) {
     fs.readFile(pathToDB, (err, fileContent) => {
-      if (err) return [];
-      return JSON.parse(fileContent);
+      if (err) callBack([]);
+      callBack(JSON.parse(fileContent));
     });
   }
 };
