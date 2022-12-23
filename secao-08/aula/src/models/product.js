@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const pathToDB = path.join(__dirname, '..', 'data', 'products.json');
+const pathToDB = path.join(__dirname, '..', 'data', 'product.json');
 
 const getProductsFromFiles = (callBack) => {
   fs.readFile(pathToDB, (err, fileContent) => {
@@ -21,10 +21,9 @@ module.exports = class Product {
 
       fs.writeFile(pathToDB, JSON.stringify(products), (writeError) => {
         if (writeError) {
-          console.log(writeError);
+          console.error(writeError);
           callBack('error');
         }
-
         callBack('success');
       });
     });
