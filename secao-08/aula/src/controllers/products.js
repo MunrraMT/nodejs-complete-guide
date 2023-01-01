@@ -8,7 +8,7 @@ exports.getAddProduct = (request, response, next) => {
     activeAddProduct: true,
   };
 
-  response.render('add-product', data);
+  response.render('admin/add-product', data);
 };
 
 exports.postAddProduct = (request, response, next) => {
@@ -32,6 +32,6 @@ exports.getProducts = (request, response, next) => {
       productCSS: true,
     };
 
-    response.render('shop', data);
+    response.render('shop/product-list', data);
   });
 };
