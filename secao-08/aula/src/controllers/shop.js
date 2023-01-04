@@ -49,3 +49,13 @@ exports.getCheckout = (request, response, next) => {
 
   response.render('shop/checkout', data);
 };
+
+exports.getOrders = (request, response, next) => {
+  const data = {
+    pageTitle: 'Your orders',
+    activeOrders: true,
+    productCSS: true,
+  };
+
+  response.render('shop/orders', data);
+};
