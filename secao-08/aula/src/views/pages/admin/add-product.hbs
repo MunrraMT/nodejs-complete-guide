@@ -5,7 +5,7 @@
     {{#each form}}
     <div class='form-control'>
       <label for='{{this.id}}'>{{this.label}}</label>
-      <input required type='{{this.type}}' name='{{this.name}}' id='{{this.id}}' />
+      <input required type='{{this.type}}' name='{{this.name}}' id='{{this.id}}' step="{{this.step}}" />
     </div>
     {{/each}}
 

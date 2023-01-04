@@ -3,7 +3,7 @@ const Product = require('../models/product');
 const formSetup = [
   { id: 'title', label: 'Title', type: 'text', name: 'title' },
   { id: 'imageUrl', label: 'Image url', type: 'text', name: 'imageUrl' },
-  { id: 'price', label: 'Price', type: 'text', name: 'price' },
+  { id: 'price', label: 'Price', type: 'number', step: '0.01', name: 'price' },
   {
     id: 'description',
     label: 'Description',
