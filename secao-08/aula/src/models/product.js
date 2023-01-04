@@ -12,6 +12,7 @@ const getProductsFromFiles = (callBack) => {
 
 module.exports = class Product {
   constructor(title, imageUrl, description, price) {
+    this.id = title.replace(/ /g, '-').toLowerCase();
     this.title = title;
     this.imageUrl = imageUrl;
     this.description = description;

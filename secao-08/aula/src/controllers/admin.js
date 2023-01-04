@@ -28,8 +28,6 @@ exports.postAddProduct = (request, response, next) => {
   const { title, imageUrl, description, price } = request.body;
   const product = new Product(title, imageUrl, description, price);
 
-  console.log(title, imageUrl, description, price);
-
   product.save((message) => {
     console.log(message);
     response.redirect('/');
@@ -43,7 +41,7 @@ exports.getProducts = (request, response, next) => {
       pageTitle: 'Admin Products',
       products,
       hasProducts,
-      activeAdminProduct: true,
+      activeAdminProducts: true,
       productCSS: true,
     };
 

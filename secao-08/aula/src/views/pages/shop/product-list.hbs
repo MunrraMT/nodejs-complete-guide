@@ -20,7 +20,9 @@
       </div>
 
       <div class='card__actions'>
-        <button class='btn'>Add to Cart</button>
+        <form action="/add-to-cart/{{this.id}}" method="post">
+          <button class='btn'>Add to Cart</button>
+        </form>
       </div>
     </article>
     {{/each}}
