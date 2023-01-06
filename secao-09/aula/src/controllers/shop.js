@@ -24,7 +24,7 @@ exports.getProductDetails = (request, response, next) => {
     const data = {
       pageTitle: result.data.title,
       product: result.data,
-      activeShop: true,
+      activeProducts: true,
       productCSS: true,
     };
 
