@@ -21,8 +21,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 const { adminRoutes } = require('./routes/admin');
-const { errorRoute } = require('./routes/error');
 const { shopRoutes } = require('./routes/shop');
+const { errorRoute } = require('./routes/error');
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
