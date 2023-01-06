@@ -17,8 +17,19 @@ exports.getProducts = (request, response, next) => {
 
 exports.getProductDetails = (request, response, next) => {
   const { productId } = request.params;
-  console.log(productId);
-  response.redirect('/');
+
+  Product.findById(productId, (result) => {
+    if (!result.success) response.redirect('/');
+
+    const data = {
+      pageTitle: result.data.title,
+      product: result.data,
+      activeShop: true,
+      productCSS: true,
+    };
+
+    response.render('shop/product-detail', data);
+  });
 };
 
 exports.getIndex = (request, response, next) => {

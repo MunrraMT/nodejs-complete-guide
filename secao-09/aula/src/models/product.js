@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const pathToDB = path.join(__dirname, '..', 'data', 'product.json');
 
-const getProductsFromFiles = (callBack) => {
+const getProductsFromFile = (callBack) => {
   fs.readFile(pathToDB, (err, fileContent) => {
     if (err || fileContent.length === 0) return callBack([]);
     return callBack(JSON.parse(fileContent));
@@ -21,7 +21,7 @@ module.exports = class Product {
   }
 
   save(callBack) {
-    getProductsFromFiles((products) => {
+    getProductsFromFile((products) => {
       products.push(this);
 
       fs.writeFile(pathToDB, JSON.stringify(products), (writeError) => {
@@ -35,6 +35,23 @@ module.exports = class Product {
   }
 
   static fetchAll(callBack) {
-    getProductsFromFiles(callBack);
+    getProductsFromFile(callBack);
+  }
+
+  static findById(productId, callBack) {
+    getProductsFromFile((products) => {
+      const product = products.find(({ id }) => id === productId);
+
+      if (!!product) {
+        callBack({
+          success: true,
+          data: product,
+        });
+      } else {
+        callBack({
+          success: false,
+        });
+      }
+    });
   }
 };
