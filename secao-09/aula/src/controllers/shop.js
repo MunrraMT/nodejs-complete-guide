@@ -15,6 +15,12 @@ exports.getProducts = (request, response, next) => {
   });
 };
 
+exports.getProductDetails = (request, response, next) => {
+  const { productId } = request.params;
+  console.log(productId);
+  response.redirect('/');
+};
+
 exports.getIndex = (request, response, next) => {
   Product.fetchAll((products) => {
     const hasProducts = !!products && products.length > 0;
