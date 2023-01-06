@@ -1,0 +1,14 @@
+<main>
+  <h1>{{pageTitle}}</h1>
+  <form class='product-form' action='/admin/add-product' method='POST'>
+
+    {{#each form}}
+    <div class='form-control'>
+      <label for='{{this.id}}'>{{this.label}}</label>
+      <input required type='{{this.type}}' name='{{this.name}}' id='{{this.id}}' step="{{this.step}}" />
+    </div>
+    {{/each}}
+
+    <button class='btn' type='submit'>Add Product</button>
+  </form>
+</main>
