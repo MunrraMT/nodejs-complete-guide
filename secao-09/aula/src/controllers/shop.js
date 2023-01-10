@@ -19,16 +19,18 @@ exports.getProductDetails = (request, response, next) => {
   const { productId } = request.params;
 
   Product.findById(productId, (result) => {
-    if (!result.success) response.redirect('/');
+    if (!result.success) {
+      response.redirect('/');
+    } else {
+      const data = {
+        pageTitle: result.data.title,
+        product: result.data,
+        activeProducts: true,
+        productCSS: true,
+      };
 
-    const data = {
-      pageTitle: result.data.title,
-      product: result.data,
-      activeProducts: true,
-      productCSS: true,
-    };
-
-    response.render('shop/product-detail', data);
+      response.render('shop/product-detail', data);
+    }
   });
 };
 
@@ -55,6 +57,12 @@ exports.getCart = (request, response, next) => {
   };
 
   response.render('shop/cart', data);
+};
+
+exports.postCart = (request, response, next) => {
+  const { productId } = request.body;
+  console.log(productId);
+  response.redirect('/cart');
 };
 
 exports.getCheckout = (request, response, next) => {

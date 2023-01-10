@@ -41,7 +41,6 @@ module.exports = class Product {
   static findById(productId, callBack) {
     getProductsFromFile((products) => {
       const product = products.find(({ id }) => id === productId);
-
       if (!!product) {
         callBack({
           success: true,
