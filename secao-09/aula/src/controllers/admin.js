@@ -19,9 +19,27 @@ exports.getAddProduct = (request, response, next) => {
     productCSS: true,
     activeAddProduct: true,
     form: formSetup,
+    editingForm: false,
   };
 
-  response.render('admin/add-product', data);
+  response.render('admin/edit-product', data);
+};
+
+exports.getEditProduct = (request, response, next) => {
+  const { edit } = request.query;
+  if (!edit) {
+    response.redirect('/');
+  } else {
+    const data = {
+      pageTitle: 'Add product',
+      formCSS: true,
+      productCSS: true,
+      form: formSetup,
+      editingForm: edit,
+    };
+
+    response.render('admin/edit-product', data);
+  }
 };
 
 exports.postAddProduct = (request, response, next) => {
