@@ -19,10 +19,7 @@ exports.getEditProduct = (request, response) => {
     response.redirect('/');
   } else {
     Product.findById(productId, (product) => {
-      if (!product.success) {
-        response.redirect('/');
-      } else {
-        console.log(product);
+      if (product.success) {
         const data = {
           pageTitle: 'Add product',
           formCSS: true,
@@ -32,9 +29,15 @@ exports.getEditProduct = (request, response) => {
         };
 
         response.render('admin/edit-product', data);
+      } else {
+        response.redirect('/');
       }
     });
   }
+};
+
+exports.postEditProduct = (request, response) => {
+  response.redirect('/');
 };
 
 exports.postAddProduct = (request, response) => {
