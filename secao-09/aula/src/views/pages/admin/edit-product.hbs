@@ -22,6 +22,10 @@
       <input required="" type="text" name="description" id="description" step="" value="{{productData.description}}">
     </div>
 
+    {{#if editingForm}}
+    <input type="hidden" name="productId" value="{{productData.id}}">
+    {{/if}}
+
     <button class='btn' type='submit'>
       {{#if editingForm}}Edit Product{{else}}Add Product{{/if}}
     </button>

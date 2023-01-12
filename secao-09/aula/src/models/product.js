@@ -12,7 +12,8 @@ const getProductsFromFile = (callBack) => {
 };
 
 module.exports = class Product {
-  constructor(title, imageUrl, description, price) {
+  constructor({ title, imageUrl, description, price, existentId }) {
+    this.existentId = existentId;
     this.id = uuidv4();
     this.title = title;
     this.imageUrl = imageUrl;
@@ -21,16 +22,33 @@ module.exports = class Product {
   }
 
   save(callBack) {
-    getProductsFromFile((products) => {
-      products.push(this);
+    getProductsFromFile((products = []) => {
+      if (!!this.existentId) {
+        const existingProductIndex = products.findIndex(
+          ({ id }) => id === this.existentId,
+        );
 
-      fs.writeFile(pathToDB, JSON.stringify(products), (writeError) => {
-        if (writeError) {
-          console.error(writeError);
-          callBack('error');
-        }
-        callBack('success');
-      });
+        const updateProducts = [...products];
+        updateProducts[existingProductIndex] = this;
+
+        fs.writeFile(pathToDB, JSON.stringify(updateProducts), (writeError) => {
+          if (writeError) {
+            console.error(writeError);
+            callBack('edit error');
+          }
+          callBack('edit success');
+        });
+      } else {
+        products.push(this);
+
+        fs.writeFile(pathToDB, JSON.stringify(products), (writeError) => {
+          if (writeError) {
+            console.error(writeError);
+            callBack('add error');
+          }
+          callBack('add success');
+        });
+      }
     });
   }
 

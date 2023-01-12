@@ -37,12 +37,24 @@ exports.getEditProduct = (request, response) => {
 };
 
 exports.postEditProduct = (request, response) => {
-  response.redirect('/');
+  const { title, imageUrl, description, price, productId } = request.body;
+  const product = new Product({
+    title,
+    imageUrl,
+    description,
+    price,
+    existentId: productId,
+  });
+
+  product.save((message) => {
+    console.log(message);
+    response.redirect('/admin/products');
+  });
 };
 
 exports.postAddProduct = (request, response) => {
   const { title, imageUrl, description, price } = request.body;
-  const product = new Product(title, imageUrl, description, price);
+  const product = new Product({ title, imageUrl, description, price });
 
   product.save((message) => {
     console.log(message);
