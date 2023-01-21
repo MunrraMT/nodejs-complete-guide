@@ -14,7 +14,7 @@ const getProductsFromFile = (callBack) => {
 module.exports = class Product {
   constructor({ title, imageUrl, description, price, existentId }) {
     this.existentId = existentId;
-    this.id = uuidv4();
+    this.id = !!existentId ? existentId : uuidv4();
     this.title = title;
     this.imageUrl = imageUrl;
     this.description = description;
@@ -29,26 +29,58 @@ module.exports = class Product {
         );
 
         const updateProducts = [...products];
-        updateProducts[existingProductIndex] = this;
+        const updateProduct = {
+          id: this.id,
+          title: this.title,
+          imageUrl: this.imageUrl,
+          description: this.description,
+          price: this.price,
+        };
+        updateProducts[existingProductIndex] = updateProduct;
 
         fs.writeFile(pathToDB, JSON.stringify(updateProducts), (writeError) => {
           if (writeError) {
+            console.log('edit error');
             console.error(writeError);
-            callBack('edit error');
+          } else {
+            console.log('edit success');
+            callBack();
           }
-          callBack('edit success');
         });
       } else {
         products.push(this);
 
         fs.writeFile(pathToDB, JSON.stringify(products), (writeError) => {
           if (writeError) {
+            console.log('add error');
             console.error(writeError);
-            callBack('add error');
+          } else {
+            console.log('add success');
+            callBack();
           }
-          callBack('add success');
         });
       }
+    });
+  }
+
+  static delete(deleteId, callBack) {
+    getProductsFromFile((products = []) => {
+      const existingProductIndex = products.findIndex(
+        ({ productId }) => productId === deleteId,
+      );
+      const updateProducts = [...products];
+
+      updateProducts.splice(existingProductIndex, 1);
+
+      fs.writeFile(pathToDB, JSON.stringify(updateProducts), (writeError) => {
+        if (writeError) {
+          console.log('delete error');
+          console.error(writeError);
+        } else {
+          console.log('delete success');
+          callBack();
+        }
+      });
     });
   }
 

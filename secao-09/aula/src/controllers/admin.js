@@ -17,48 +17,22 @@ exports.getEditProduct = (request, response) => {
   const { productId } = request.params;
   if (!edit || !productId) {
     response.redirect('/');
-  } else {
-    Product.findById(productId, (product) => {
-      if (product.success) {
-        const data = {
-          pageTitle: 'Add product',
-          formCSS: true,
-          productCSS: true,
-          editingForm: edit,
-          productData: product.data,
-        };
-
-        response.render('admin/edit-product', data);
-      } else {
-        response.redirect('/');
-      }
-    });
   }
-};
 
-exports.postEditProduct = (request, response) => {
-  const { title, imageUrl, description, price, productId } = request.body;
-  const product = new Product({
-    title,
-    imageUrl,
-    description,
-    price,
-    existentId: productId,
-  });
+  Product.findById(productId, (product) => {
+    if (product.success) {
+      const data = {
+        pageTitle: 'Add product',
+        formCSS: true,
+        productCSS: true,
+        editingForm: edit,
+        productData: product.data,
+      };
 
-  product.save((message) => {
-    console.log(message);
-    response.redirect('/admin/products');
-  });
-};
-
-exports.postAddProduct = (request, response) => {
-  const { title, imageUrl, description, price } = request.body;
-  const product = new Product({ title, imageUrl, description, price });
-
-  product.save((message) => {
-    console.log(message);
-    response.redirect('/');
+      response.render('admin/edit-product', data);
+    } else {
+      response.redirect('/');
+    }
   });
 };
 
@@ -74,5 +48,37 @@ exports.getProducts = (request, response) => {
     };
 
     response.render('admin/list-product', data);
+  });
+};
+
+exports.postEditProduct = (request, response) => {
+  const { title, imageUrl, description, price, productId } = request.body;
+  const product = new Product({
+    title,
+    imageUrl,
+    description,
+    price,
+    existentId: productId,
+  });
+
+  product.save(() => {
+    response.redirect('/admin/products');
+  });
+};
+
+exports.postAddProduct = (request, response) => {
+  const { title, imageUrl, description, price } = request.body;
+  const product = new Product({ title, imageUrl, description, price });
+
+  product.save(() => {
+    response.redirect('/');
+  });
+};
+
+exports.postDeleteProduct = (request, response) => {
+  const { productId } = request.body;
+
+  Product.delete(productId, () => {
+    response.redirect('/admin/products');
   });
 };
