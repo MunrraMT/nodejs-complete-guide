@@ -51,13 +51,19 @@ exports.getIndex = (request, response, next) => {
 };
 
 exports.getCart = (request, response, next) => {
-  const data = {
-    pageTitle: 'Your cart',
-    activeCart: true,
-    productCSS: true,
-  };
+  Cart.getData(({ products, totalPrice, numberOfProducts }) => {
+    const data = {
+      pageTitle: 'Your cart',
+      activeCart: true,
+      productCSS: true,
+      hasProductsInsideCart: numberOfProducts > 0,
+      numberOfProducts,
+      products,
+      totalPrice,
+    };
 
-  response.render('shop/cart', data);
+    response.render('shop/cart', data);
+  });
 };
 
 exports.postCart = (request, response, next) => {
@@ -88,4 +94,18 @@ exports.getOrders = (request, response, next) => {
   };
 
   response.render('shop/orders', data);
+};
+
+exports.postDeleteProduct = (request, response, next) => {
+  const { productId, productPrice } = request.body;
+
+  Cart.isProductExist({ productId }, (result) => {
+    if (result.isExist) {
+      Cart.deleteProduct({ productId, productPrice }, () => {
+        response.redirect('/cart');
+      });
+    } else {
+      response.redirect('/cart');
+    }
+  });
 };

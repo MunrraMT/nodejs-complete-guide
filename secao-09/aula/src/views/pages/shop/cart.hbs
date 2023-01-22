@@ -1,3 +1,25 @@
 <main>
   <h1>{{pageTitle}}</h1>
+  {{#if hasProductsInsideCart}}
+  <section>
+    <p>Total de itens no carrinho: <span>{{numberOfProducts}}</span></p>
+    <p>Valor total do carrinho: <span>R$ {{totalPrice}}</span></p>
+  </section>
+  <section>
+    <p>Itens no carrinho:</p>
+    {{#each products}}
+    <div style="display: flex;align-items: center; gap: 10px; padding-left: 20px;">
+      <p>{{this.title}}</p>
+      <p>R$ {{this.price}}</p>
+      <form action="/cart/delete-product/" method="post">
+        <input type="hidden" name="productId" value="{{this.id}}">
+        <input type="hidden" name="productPrice" value="{{this.price}}">
+        <button class="btn" type="submit">Delete</button>
+      </form>
+    </div>
+    {{/each}}
+  </section>
+  {{else}}
+  <h2>No Products Found!</h2>
+  {{/if}}
 </main>

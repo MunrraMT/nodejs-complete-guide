@@ -21,7 +21,7 @@ module.exports = class Cart {
         (id) => id === product.id,
       );
 
-      if (existingProduct) {
+      if (!!existingProduct) {
         const findProductIndex = cart.products.findIndex(
           ({ id }) => id === product.id,
         );
@@ -45,6 +45,71 @@ module.exports = class Cart {
           console.log(err);
         }
       });
+    });
+  }
+
+  static getData(callback) {
+    fs.readFile(pathToDB, (err, fileContent) => {
+      let cart = {
+        products: [],
+        productIdList: [],
+        totalPrice: 0,
+        numberOfProducts: 0,
+      };
+
+      if (!err && fileContent.length > 0) {
+        cart = JSON.parse(fileContent);
+      }
+
+      callback(cart);
+    });
+  }
+
+  static isProductExist({ productId }, callback) {
+    fs.readFile(pathToDB, (err, fileContent) => {
+      if (!!err || fileContent.length === 0) {
+        callback({ isExist: false });
+      } else {
+        const cart = JSON.parse(fileContent);
+        const findProductById = cart.products.find(
+          ({ id }) => id === productId,
+        );
+
+        if (!!findProductById) {
+          callback({ isExist: true });
+        } else {
+          callback({ isExist: false });
+        }
+      }
+    });
+  }
+
+  static deleteProduct({ productId, productPrice }, callback) {
+    fs.readFile(pathToDB, (err, fileContent) => {
+      if (!err && fileContent.length > 0) {
+        const cart = JSON.parse(fileContent);
+
+        const productIdListDeleteIndex = cart.productIdList.findIndex(
+          ({ id }) => id === productId,
+        );
+
+        const productDeleteIndex = cart.products.findIndex(
+          ({ id }) => id === productId,
+        );
+
+        cart.productIdList.splice(productIdListDeleteIndex, 1);
+        cart.products.splice(productDeleteIndex, 1);
+        cart.totalPrice -= Number(productPrice);
+        cart.numberOfProducts -= 1;
+
+        fs.writeFile(pathToDB, JSON.stringify(cart), (err) => {
+          if (err) {
+            console.log(err);
+          } else {
+            callback();
+          }
+        });
+      }
     });
   }
 };
