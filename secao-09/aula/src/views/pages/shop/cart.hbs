@@ -15,6 +15,7 @@
       <form action="/cart/delete-product/" method="post">
         <input type="hidden" name="productId" value="{{this.id}}">
         <input type="hidden" name="productPrice" value="{{this.price}}">
+        <input type="hidden" name="quantity" value="{{this.quantity}}">
         <button class="btn" type="submit">Delete</button>
       </form>
     </div>

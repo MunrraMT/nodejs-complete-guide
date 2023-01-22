@@ -52,25 +52,53 @@ exports.getIndex = (request, response, next) => {
 
 exports.getCart = (request, response, next) => {
   Cart.getData(({ products, totalPrice, numberOfProducts }) => {
-    const data = {
-      pageTitle: 'Your cart',
-      activeCart: true,
-      productCSS: true,
-      hasProductsInsideCart: numberOfProducts > 0,
-      numberOfProducts,
-      products,
-      totalPrice,
-    };
+    Product.fetchAll((productsDb) => {
+      const productList = [...products];
+      for (let index = 0; index < productList.length; index++) {
+        const product = productsDb.find(
+          ({ id }) => id === productList[index].id,
+        );
 
-    response.render('shop/cart', data);
+        if (!!product) {
+          productList[index].title = product.title;
+          productList[index].price = product.price;
+        }
+      }
+
+      const data = {
+        pageTitle: 'Your cart',
+        activeCart: true,
+        productCSS: true,
+        hasProductsInsideCart: numberOfProducts > 0,
+        numberOfProducts,
+        products: productList,
+        totalPrice,
+      };
+
+      response.render('shop/cart', data);
+    });
   });
 };
 
-exports.postCart = (request, response, next) => {
-  const { productId } = request.body;
+exports.postAddCart = (request, response, next) => {
+  const { productId, productPrice } = request.body;
   Product.findById(productId, (product) => {
     if (product.success) {
-      Cart.addProduct({ product: product.data }, () => {
+      Cart.addProduct({ productId, productPrice }, () => {
+        response.redirect('/cart');
+      });
+    } else {
+      response.redirect('/cart');
+    }
+  });
+};
+
+exports.postDeleteProduct = (request, response, next) => {
+  const { productId, productPrice, quantity } = request.body;
+
+  Cart.isProductExist({ productId }, (result) => {
+    if (result.isExist) {
+      Cart.deleteProduct({ productId, productPrice, quantity }, () => {
         response.redirect('/cart');
       });
     } else {
@@ -97,18 +125,4 @@ exports.getOrders = (request, response, next) => {
   };
 
   response.render('shop/orders', data);
-};
-
-exports.postDeleteProduct = (request, response, next) => {
-  const { productId, productPrice } = request.body;
-
-  Cart.isProductExist({ productId }, (result) => {
-    if (result.isExist) {
-      Cart.deleteProduct({ productId, productPrice }, () => {
-        response.redirect('/cart');
-      });
-    } else {
-      response.redirect('/cart');
-    }
-  });
 };

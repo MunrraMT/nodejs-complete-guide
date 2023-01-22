@@ -8,7 +8,6 @@ module.exports = class Cart {
     fs.readFile(pathToDB, (err, fileContent) => {
       let cart = {
         products: [],
-        productIdList: [],
         totalPrice: 0,
         numberOfProducts: 0,
       };
@@ -27,8 +26,8 @@ module.exports = class Cart {
         callback({ isExist: false });
       } else {
         const cart = JSON.parse(fileContent);
-        const findProductById = cart.productIdList.find(
-          (id) => id === productId,
+        const findProductById = cart.products.find(
+          ({ id }) => id === productId,
         );
 
         if (!!findProductById) {
@@ -40,11 +39,10 @@ module.exports = class Cart {
     });
   }
 
-  static addProduct({ product }, callback) {
+  static addProduct({ productId, productPrice }, callback) {
     fs.readFile(pathToDB, (err, fileContent) => {
       let cart = {
         products: [],
-        productIdList: [],
         totalPrice: 0,
         numberOfProducts: 0,
       };
@@ -53,20 +51,23 @@ module.exports = class Cart {
         cart = JSON.parse(fileContent);
       }
 
-      this.isProductExist({ productId: product.id }, ({ isExist }) => {
+      this.isProductExist({ productId }, ({ isExist }) => {
         if (isExist) {
-          const productIndex = cart.productIdList.findIndex(
-            (id) => id === product.id,
+          const productIndex = cart.products.findIndex(
+            ({ id }) => id === productId,
           );
           cart.products[productIndex].quantity += 1;
         } else {
-          const newProduct = { ...product, quantity: 1 };
-          cart.productIdList.push(product.id);
+          const newProduct = {
+            id: productId,
+            price: Number(productPrice),
+            quantity: 1,
+          };
           cart.products.push(newProduct);
         }
 
         cart.numberOfProducts += 1;
-        cart.totalPrice += Number(product.price);
+        cart.totalPrice += Number(productPrice);
 
         fs.writeFile(pathToDB, JSON.stringify(cart), (err) => {
           if (err) {
@@ -78,19 +79,17 @@ module.exports = class Cart {
     });
   }
 
-  static deleteProduct({ productId, productPrice }, callback) {
+  static deleteProduct({ productId, productPrice, quantity }, callback) {
     fs.readFile(pathToDB, (err, fileContent) => {
       if (!err && fileContent.length > 0) {
         const cart = JSON.parse(fileContent);
-
-        const productIndex = cart.productIdList.findIndex(
-          (id) => id === productId,
+        const productIndex = cart.products.findIndex(
+          ({ id }) => id === productId,
         );
 
-        cart.productIdList.splice(productIndex, 1);
         cart.products.splice(productIndex, 1);
-        cart.totalPrice -= Number(productPrice);
-        cart.numberOfProducts -= 1;
+        cart.totalPrice -= Number(productPrice) * Number(quantity);
+        cart.numberOfProducts -= Number(quantity);
 
         fs.writeFile(pathToDB, JSON.stringify(cart), (err) => {
           if (err) {
@@ -99,6 +98,8 @@ module.exports = class Cart {
             callback();
           }
         });
+      } else {
+        callback();
       }
     });
   }
