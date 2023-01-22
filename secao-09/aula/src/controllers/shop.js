@@ -70,10 +70,13 @@ exports.postCart = (request, response, next) => {
   const { productId } = request.body;
   Product.findById(productId, (product) => {
     if (product.success) {
-      Cart.addProduct(product.data);
+      Cart.addProduct({ product: product.data }, () => {
+        response.redirect('/cart');
+      });
+    } else {
+      response.redirect('/cart');
     }
   });
-  response.redirect('/cart');
 };
 
 exports.getCheckout = (request, response, next) => {

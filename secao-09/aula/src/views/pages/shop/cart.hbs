@@ -9,8 +9,9 @@
     <p>Itens no carrinho:</p>
     {{#each products}}
     <div style="display: flex;align-items: center; gap: 10px; padding-left: 20px;">
-      <p>{{this.title}}</p>
-      <p>R$ {{this.price}}</p>
+      <p>Nome: {{this.title}}</p>
+      <p>Valor: R$ {{this.price}}</p>
+      <p>Quantidade: {{this.quantity}}</p>
       <form action="/cart/delete-product/" method="post">
         <input type="hidden" name="productId" value="{{this.id}}">
         <input type="hidden" name="productPrice" value="{{this.price}}">
