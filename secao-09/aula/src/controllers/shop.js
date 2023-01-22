@@ -50,7 +50,7 @@ exports.getIndex = (request, response, next) => {
   });
 };
 
-exports.getCart = (request, response, next) => {
+exports.getCartProducts = (request, response, next) => {
   Cart.getData(({ products, totalPrice, numberOfProducts }) => {
     Product.fetchAll((productsDb) => {
       const productList = [...products];
@@ -80,7 +80,7 @@ exports.getCart = (request, response, next) => {
   });
 };
 
-exports.postAddCart = (request, response, next) => {
+exports.postCartAddProduct = (request, response, next) => {
   const { productId, productPrice } = request.body;
   Product.findById(productId, (product) => {
     if (product.success) {
@@ -93,7 +93,7 @@ exports.postAddCart = (request, response, next) => {
   });
 };
 
-exports.postDeleteProduct = (request, response, next) => {
+exports.postCartDeleteProduct = (request, response, next) => {
   const { productId, productPrice, quantity } = request.body;
 
   Cart.isProductExist({ productId }, (result) => {

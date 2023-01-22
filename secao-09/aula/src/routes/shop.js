@@ -8,9 +8,9 @@ route.get('/', shopController.getIndex);
 route.get('/checkout', shopController.getCheckout);
 route.get('/orders', shopController.getOrders);
 
-route.get('/cart', shopController.getCart);
-route.post('/cart', shopController.postAddCart);
-route.post('/cart/delete-product', shopController.postDeleteProduct);
+route.get('/cart', shopController.getCartProducts);
+route.post('/cart', shopController.postCartAddProduct);
+route.post('/cart/delete-product', shopController.postCartDeleteProduct);
 
 route.get('/products', shopController.getProducts);
 route.get('/products/:productId', shopController.getProductDetails);
