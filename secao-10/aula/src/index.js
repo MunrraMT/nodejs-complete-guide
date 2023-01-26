@@ -22,7 +22,9 @@ app.engine(
 app.set('view engine', 'hbs');
 app.set('views', 'src/views/pages');
 
-db.execute('SELECT * FROM products');
+db.execute('SELECT * FROM products')
+  .then(() => {})
+  .catch(() => {});
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
