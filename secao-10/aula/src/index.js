@@ -23,8 +23,12 @@ app.set('view engine', 'hbs');
 app.set('views', 'src/views/pages');
 
 db.execute('SELECT * FROM products')
-  .then(() => {})
-  .catch(() => {});
+  .then((result) => {
+    console.log(result[0]);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
