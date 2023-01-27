@@ -20,20 +20,22 @@ exports.getProducts = (request, response, next) => {
 exports.getProductDetails = (request, response, next) => {
   const { productId } = request.params;
 
-  Product.findById(productId, (result) => {
-    if (!result.success) {
-      response.redirect('/');
-    } else {
+  Product.findById(productId)
+    .then((result) => {
+      const product = { ...result };
       const data = {
-        pageTitle: result.data.title,
-        product: result.data,
+        pageTitle: product.title,
+        product,
         activeProducts: true,
         productCSS: true,
       };
 
       response.render('shop/product-detail', data);
-    }
-  });
+    })
+    .catch((err) => {
+      console.log(err);
+      response.redirect('/');
+    });
 };
 
 exports.getIndex = (request, response, next) => {

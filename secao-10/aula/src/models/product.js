@@ -18,12 +18,23 @@ module.exports = class Product {
 
   static fetchAll() {
     return new Promise((resolve, reject) => {
-      db.query('SELECT * FROM products', (err, dbContent) => {
+      db.query('SELECT * FROM products', (err, results) => {
         if (err) return reject(err);
-        return resolve(dbContent);
+        return resolve(results);
       });
     });
   }
 
-  static findById(productId) {}
+  static findById(productId) {
+    return new Promise((resolve, reject) => {
+      db.query(
+        'SELECT * FROM products WHERE id= ?',
+        [productId],
+        (err, results) => {
+          if (err) return reject(err);
+          return resolve(results[0]);
+        },
+      );
+    });
+  }
 };
