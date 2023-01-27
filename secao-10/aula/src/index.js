@@ -2,7 +2,6 @@ const express = require('express');
 const expressHbs = require('express-handlebars');
 const path = require('path');
 
-const db = require('./data/database');
 const { adminRoutes } = require('./routes/admin');
 const { shopRoutes } = require('./routes/shop');
 const { errorRoute } = require('./routes/error');
@@ -21,14 +20,6 @@ app.engine(
 
 app.set('view engine', 'hbs');
 app.set('views', 'src/views/pages');
-
-db.execute('SELECT * FROM products')
-  .then((result) => {
-    console.log(result[0]);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '..', 'public')));

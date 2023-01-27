@@ -1,4 +1,5 @@
-const mysql = require('mysql2');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const mysql = require('mysql');
 
 const pool = mysql.createPool({
   host: 'localhost',
@@ -8,4 +9,4 @@ const pool = mysql.createPool({
   connectionLimit: 10,
 });
 
-module.exports = pool.promise();
+module.exports = pool;

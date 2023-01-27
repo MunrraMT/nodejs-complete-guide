@@ -2,18 +2,19 @@ const Cart = require('../models/cart');
 const Product = require('../models/product');
 
 exports.getProducts = (request, response, next) => {
-  Product.fetchAll((products) => {
-    const hasProducts = !!products && products.length > 0;
-    const data = {
-      pageTitle: 'All Products',
-      products,
-      hasProducts,
-      activeProducts: true,
-      productCSS: true,
-    };
+  Product.fetchAll()
+    .then((products) => {
+      const data = {
+        pageTitle: 'All Products',
+        products,
+        hasProducts: !!products && products.length > 0,
+        activeProducts: true,
+        productCSS: true,
+      };
 
-    response.render('shop/product-list', data);
-  });
+      response.render('shop/product-list', data);
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getProductDetails = (request, response, next) => {
@@ -36,18 +37,20 @@ exports.getProductDetails = (request, response, next) => {
 };
 
 exports.getIndex = (request, response, next) => {
-  Product.fetchAll((products) => {
-    const hasProducts = !!products && products.length > 0;
-    const data = {
-      pageTitle: 'Shop',
-      products,
-      hasProducts,
-      activeShop: true,
-      productCSS: true,
-    };
+  Product.fetchAll()
+    .then((products) => {
+      const hasProducts = !!products && products.length > 0;
+      const data = {
+        pageTitle: 'Shop',
+        products,
+        hasProducts,
+        activeShop: true,
+        productCSS: true,
+      };
 
-    response.render('shop/index', data);
-  });
+      response.render('shop/index', data);
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getCartProducts = (request, response, next) => {
