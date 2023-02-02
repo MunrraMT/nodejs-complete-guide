@@ -19,36 +19,40 @@ exports.getEditProduct = (request, response) => {
     response.redirect('/');
   }
 
-  Product.findById(productId, (product) => {
-    if (product.success) {
+  Product.findById(productId)
+    .then((result) => {
+      const product = { ...result };
       const data = {
         pageTitle: 'Add product',
         formCSS: true,
         productCSS: true,
         editingForm: edit,
-        productData: product.data,
+        productData: product,
       };
 
       response.render('admin/edit-product', data);
-    } else {
+    })
+    .catch((err) => {
+      console.log(err);
       response.redirect('/');
-    }
-  });
+    });
 };
 
 exports.getProducts = (request, response) => {
-  Product.fetchAll((products) => {
-    const hasProducts = !!products && products.length > 0;
-    const data = {
-      pageTitle: 'Admin Products',
-      products,
-      hasProducts,
-      activeAdminProducts: true,
-      productCSS: true,
-    };
+  Product.fetchAll()
+    .then((products) => {
+      const hasProducts = !!products && products.length > 0;
+      const data = {
+        pageTitle: 'Admin Products',
+        products,
+        hasProducts,
+        activeAdminProducts: true,
+        productCSS: true,
+      };
 
-    response.render('admin/list-product', data);
-  });
+      response.render('admin/list-product', data);
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.postEditProduct = (request, response) => {
@@ -70,9 +74,12 @@ exports.postAddProduct = (request, response) => {
   const { title, imageUrl, description, price } = request.body;
   const product = new Product({ title, imageUrl, description, price });
 
-  product.save(() => {
-    response.redirect('/');
-  });
+  product
+    .save()
+    .then(() => {
+      response.redirect('/');
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.postDeleteProduct = (request, response) => {
