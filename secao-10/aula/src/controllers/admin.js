@@ -65,9 +65,12 @@ exports.postEditProduct = (request, response) => {
     existentId: productId,
   });
 
-  product.save(() => {
-    response.redirect('/admin/products');
-  });
+  product
+    .save()
+    .then(() => {
+      response.redirect('/admin/products');
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.postAddProduct = (request, response) => {

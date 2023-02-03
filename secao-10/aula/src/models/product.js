@@ -14,9 +14,28 @@ module.exports = class Product {
 
   save() {
     return Product.findById(this.existentId)
-      .then((product) => {
-        console.log(product);
-      })
+      .then(
+        () =>
+          new Promise((resolve, reject) => {
+            db.query(
+              'UPDATE products SET title = ?, imageUrl = ?, description = ?, price =? WHERE id = ?',
+              [
+                this.title,
+                this.imageUrl,
+                this.description,
+                this.price,
+                this.existentId,
+              ],
+              (messageError, result) => {
+                if (messageError) {
+                  reject(messageError);
+                } else {
+                  resolve(result);
+                }
+              },
+            );
+          }),
+      )
       .catch(
         () =>
           new Promise((resolve, reject) => {
@@ -29,11 +48,11 @@ module.exports = class Product {
                 this.description,
                 this.price,
               ],
-              (messageError, results) => {
+              (messageError, result) => {
                 if (messageError) {
                   reject(messageError);
                 } else {
-                  resolve(results);
+                  resolve(result);
                 }
               },
             );
@@ -55,7 +74,7 @@ module.exports = class Product {
   static findById(productId) {
     return new Promise((resolve, reject) => {
       db.query(
-        'SELECT * FROM products WHERE id= ?',
+        'SELECT * FROM products WHERE id = ?',
         [productId],
         (err, results) => {
           if (err) return reject(err);
