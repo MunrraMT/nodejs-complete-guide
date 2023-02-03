@@ -88,7 +88,9 @@ exports.postAddProduct = (request, response) => {
 exports.postDeleteProduct = (request, response) => {
   const { productId } = request.body;
 
-  Product.delete(productId, () => {
-    response.redirect('/admin/products');
-  });
+  Product.delete(productId)
+    .then(() => {
+      response.redirect('/admin/products');
+    })
+    .catch((err) => console.log(err));
 };

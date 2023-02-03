@@ -60,7 +60,18 @@ module.exports = class Product {
       );
   }
 
-  static delete(deleteId) {}
+  static delete(deleteId) {
+    return new Promise((resolve, reject) => {
+      db.query(
+        'DELETE FROM products WHERE id = ?',
+        [deleteId],
+        (messageError, result) => {
+          if (messageError) reject(messageError);
+          resolve(result);
+        },
+      );
+    });
+  }
 
   static fetchAll() {
     return new Promise((resolve, reject) => {
