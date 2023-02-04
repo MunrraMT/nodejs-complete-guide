@@ -4,11 +4,13 @@ const sequelize = require('../data/database');
 
 const Product = sequelize.define('Products', {
   id: {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.STRING,
     allowNull: false,
     primaryKey: true,
   },
-  title: DataTypes.STRING,
+  title: {
+    type: DataTypes.STRING,
+  },
   imageUrl: {
     type: DataTypes.STRING,
     allowNull: false,
