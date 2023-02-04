@@ -41,9 +41,10 @@ exports.getEditProduct = (request, response) => {
 };
 
 exports.getProducts = (request, response) => {
-  Product.fetchAll()
-    .then((products) => {
-      const hasProducts = !!products && products.length > 0;
+  Product.findAll()
+    .then((result) => {
+      const hasProducts = result.length > 0;
+      const products = result.map((product) => product.dataValues);
       const data = {
         pageTitle: 'Admin Products',
         products,

@@ -2,12 +2,14 @@ const Cart = require('../models/cart');
 const Product = require('../models/product');
 
 exports.getProducts = (request, response, next) => {
-  Product.fetchAll()
-    .then((products) => {
+  Product.findAll()
+    .then((result) => {
+      const hasProducts = result.length > 0;
+      const products = result.map((product) => product.dataValues);
       const data = {
         pageTitle: 'All Products',
         products,
-        hasProducts: !!products && products.length > 0,
+        hasProducts,
         activeProducts: true,
         productCSS: true,
       };
@@ -39,9 +41,10 @@ exports.getProductDetails = (request, response, next) => {
 };
 
 exports.getIndex = (request, response, next) => {
-  Product.fetchAll()
-    .then((products) => {
-      const hasProducts = !!products && products.length > 0;
+  Product.findAll()
+    .then((result) => {
+      const hasProducts = result.length > 0;
+      const products = result.map((product) => product.dataValues);
       const data = {
         pageTitle: 'Shop',
         products,
@@ -57,7 +60,7 @@ exports.getIndex = (request, response, next) => {
 
 exports.getCartProducts = (request, response, next) => {
   Cart.getData(({ products, totalPrice, numberOfProducts }) => {
-    Product.fetchAll((productsDb) => {
+    Product.findAll(() => {
       const productList = [...products];
       for (let index = 0; index < productList.length; index++) {
         const product = productsDb.find(
