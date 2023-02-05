@@ -60,16 +60,10 @@ exports.getProducts = (request, response) => {
 
 exports.postEditProduct = (request, response) => {
   const { title, imageUrl, description, price, productId } = request.body;
-  const product = new Product({
-    title,
-    imageUrl,
-    description,
-    price,
-    existentId: productId,
-  });
-
-  product
-    .save()
+  Product.update(
+    { title, imageUrl, description, price },
+    { where: { id: productId } },
+  )
     .then(() => {
       response.redirect('/admin/products');
     })
@@ -89,7 +83,7 @@ exports.postAddProduct = (request, response) => {
 exports.postDeleteProduct = (request, response) => {
   const { productId } = request.body;
 
-  Product.delete(productId)
+  Product.destroy({ where: { id: productId } })
     .then(() => {
       response.redirect('/admin/products');
     })
