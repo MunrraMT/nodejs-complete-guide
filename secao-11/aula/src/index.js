@@ -7,6 +7,8 @@ const { shopRoutes } = require('./routes/shop');
 const { errorRoute } = require('./routes/error');
 
 const sequelize = require('./data/database');
+const Product = require('./models/product');
+const User = require('./models/user');
 
 const app = express();
 
@@ -30,7 +32,15 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(errorRoute);
 
+Product.belongsTo(User, {
+  constraints: true,
+  onDelete: 'CASCADE',
+});
+
+User.hasMany(Product);
+
 sequelize
+  // .sync({ force: true })
   .sync()
   .then(() => app.listen(3000, () => console.log('Server ON!')))
   .catch((err) => console.log(err));
