@@ -21,9 +21,9 @@ exports.getEditProduct = (request, response) => {
     response.redirect('/');
   }
 
-  Product.findById(productId)
+  Product.findByPk(productId)
     .then((result) => {
-      const product = { ...result };
+      const product = result.dataValues;
       const data = {
         pageTitle: 'Add product',
         formCSS: true,
