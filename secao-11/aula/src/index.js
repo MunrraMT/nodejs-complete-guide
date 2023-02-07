@@ -28,6 +28,15 @@ app.set('views', 'src/views/pages');
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
+app.use((request, response, next) => {
+  User.findByPk('admin')
+    .then((user) => {
+      request.user = user;
+      next();
+    })
+    .catch((err) => console.log(err));
+});
+
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(errorRoute);
@@ -42,5 +51,23 @@ User.hasMany(Product);
 sequelize
   // .sync({ force: true })
   .sync()
-  .then(() => app.listen(3000, () => console.log('Server ON!')))
+  .then(() => {
+    return User.findByPk('admin');
+  })
+  .then((user) => {
+    if (!user) {
+      return User.create({
+        id: 'admin',
+        name: 'André',
+        email: 'test@test.com',
+      });
+    }
+    return Promise.resolve(user);
+  })
+  .then((user) => {
+    console.log(user);
+  })
+  .then(() => {
+    app.listen(3000, () => console.log('Server ON!'));
+  })
   .catch((err) => console.log(err));
