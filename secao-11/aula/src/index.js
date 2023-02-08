@@ -64,9 +64,6 @@ sequelize
     }
     return Promise.resolve(user);
   })
-  .then((user) => {
-    console.log(user);
-  })
   .then(() => {
     app.listen(3000, () => console.log('Server ON!'));
   })

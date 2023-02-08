@@ -21,9 +21,10 @@ exports.getEditProduct = (request, response) => {
     response.redirect('/');
   }
 
-  Product.findByPk(productId)
+  request.user
+    .getProducts({ id: productId })
     .then((result) => {
-      const product = result.dataValues;
+      const product = result[0].dataValues;
       const data = {
         pageTitle: 'Add product',
         formCSS: true,
@@ -41,7 +42,8 @@ exports.getEditProduct = (request, response) => {
 };
 
 exports.getProducts = (request, response) => {
-  Product.findAll()
+  request.user
+    .getProducts()
     .then((result) => {
       const hasProducts = result.length > 0;
       const products = result.map((product) => product.dataValues);
@@ -60,10 +62,11 @@ exports.getProducts = (request, response) => {
 
 exports.postEditProduct = (request, response) => {
   const { title, imageUrl, description, price, productId } = request.body;
-  Product.update(
-    { title, imageUrl, description, price },
-    { where: { id: productId } },
-  )
+  request.user
+    .getProducts({ where: { id: productId } })
+    .then((result) => {
+      result[0].update({ title, imageUrl, description, price });
+    })
     .then(() => {
       response.redirect('/admin/products');
     })
@@ -80,8 +83,7 @@ exports.postAddProduct = (request, response) => {
       description,
       price,
     })
-    .then((result) => {
-      console.log(result);
+    .then(() => {
       response.redirect('/admin/products');
     })
     .catch((err) => console.log(err));
@@ -90,7 +92,11 @@ exports.postAddProduct = (request, response) => {
 exports.postDeleteProduct = (request, response) => {
   const { productId } = request.body;
 
-  Product.destroy({ where: { id: productId } })
+  request.user
+    .getProducts({ where: { id: productId } })
+    .then((result) => {
+      result[0].destroy();
+    })
     .then(() => {
       response.redirect('/admin/products');
     })
