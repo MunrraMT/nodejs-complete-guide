@@ -72,7 +72,14 @@ exports.postEditProduct = (request, response) => {
 
 exports.postAddProduct = (request, response) => {
   const { title, imageUrl, description, price } = request.body;
-  Product.create({ id: uuidV4(), title, imageUrl, description, price })
+  request.user
+    .createProduct({
+      id: uuidV4(),
+      title,
+      imageUrl,
+      description,
+      price,
+    })
     .then((result) => {
       console.log(result);
       response.redirect('/admin/products');
