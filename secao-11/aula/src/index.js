@@ -68,7 +68,10 @@ sequelize
         email: 'test@test.com',
       });
     }
-    return Promise.resolve(user);
+    return user;
+  })
+  .then((user) => {
+    return user.createCart();
   })
   .then(() => {
     app.listen(3000, () => console.log('Server ON!'));

@@ -2,8 +2,10 @@ const Cart = require('../models/cart');
 const Product = require('../models/product');
 
 exports.getProducts = (request, response, next) => {
-  Product.findAll()
+  request.user
+    .getProducts()
     .then((result) => {
+      console.log(result);
       const hasProducts = result.length > 0;
       const products = result.map((product) => product.dataValues);
       const data = {
@@ -22,10 +24,11 @@ exports.getProducts = (request, response, next) => {
 exports.getProductDetails = (request, response, next) => {
   const { productId } = request.params;
 
-  Product.findByPk(productId)
+  request.user
+    .getProducts({ where: { id: productId } })
     .then((result) => {
       if (!!result) {
-        const product = result.dataValues;
+        const product = result[0].dataValues;
         const data = {
           pageTitle: product.title,
           product,
@@ -45,7 +48,8 @@ exports.getProductDetails = (request, response, next) => {
 };
 
 exports.getIndex = (request, response, next) => {
-  Product.findAll()
+  request.user
+    .getProducts()
     .then((result) => {
       const hasProducts = result.length > 0;
       const products = result.map((product) => product.dataValues);
@@ -63,33 +67,27 @@ exports.getIndex = (request, response, next) => {
 };
 
 exports.getCartProducts = (request, response, next) => {
-  Cart.getData(({ products, totalPrice, numberOfProducts }) => {
-    Product.findAll(() => {
-      const productList = [...products];
-      for (let index = 0; index < productList.length; index++) {
-        const product = productsDb.find(
-          ({ id }) => id === productList[index].id,
-        );
+  request.user
+    .getCart()
+    .then((cart) => {
+      return cart
+        .getProducts()
+        .then((products) => {
+          const data = {
+            pageTitle: 'Your cart',
+            activeCart: true,
+            productCSS: true,
+            hasProductsInsideCart: products.length > 0,
+            numberOfProducts: products.length,
+            products: products,
+            totalPrice: 0,
+          };
 
-        if (!!product) {
-          productList[index].title = product.title;
-          productList[index].price = product.price;
-        }
-      }
-
-      const data = {
-        pageTitle: 'Your cart',
-        activeCart: true,
-        productCSS: true,
-        hasProductsInsideCart: numberOfProducts > 0,
-        numberOfProducts,
-        products: productList,
-        totalPrice,
-      };
-
-      response.render('shop/cart', data);
-    });
-  });
+          response.render('shop/cart', data);
+        })
+        .catch((err) => console.log(err));
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.postCartAddProduct = (request, response, next) => {
