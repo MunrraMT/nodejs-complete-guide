@@ -73,14 +73,23 @@ exports.getCartProducts = (request, response, next) => {
       return cart
         .getProducts()
         .then((products) => {
+          console.log(products);
+
           const data = {
             pageTitle: 'Your cart',
             activeCart: true,
             productCSS: true,
             hasProductsInsideCart: products.length > 0,
             numberOfProducts: products.length,
-            products: products.map((product) => product.dataValues),
-            totalPrice: 0,
+            products: products.map((product) => ({
+              ...product.dataValues,
+              quantity: product.cartItem.dataValues.quantity,
+            })),
+            totalPrice: products.reduce((acc, product) => {
+              return (acc +=
+                product.dataValues.price *
+                product.cartItem.dataValues.quantity);
+            }, 0),
           };
 
           response.render('shop/cart', data);
@@ -93,6 +102,7 @@ exports.getCartProducts = (request, response, next) => {
 exports.postCartAddProduct = (request, response, next) => {
   const { productId } = request.body;
   let fetchedCart;
+  let newQuantity = 1;
 
   request.user
     .getCart()
@@ -101,21 +111,23 @@ exports.postCartAddProduct = (request, response, next) => {
       return cart.getProducts({ where: { id: productId } });
     })
     .then((products) => {
-      console.log(products);
       let product;
-      let newQuantity = 1;
       if (products.length > 0) {
-        product = products[0].dataValues;
-      } else {
+        product = products[0];
       }
 
-      return Product.findByPk(productId)
-        .then((product) => {
-          return fetchedCart.addProduct(product, {
-            through: { quantity: newQuantity },
-          });
-        })
-        .catch((err) => console.log(err));
+      if (product) {
+        const oldQuantity = product.cartItem.dataValues.quantity;
+        newQuantity += oldQuantity;
+        return product;
+      }
+
+      return Product.findByPk(productId);
+    })
+    .then((product) => {
+      return fetchedCart.addProduct(product, {
+        through: { quantity: newQuantity },
+      });
     })
     .then(() => {
       response.redirect('/cart');
