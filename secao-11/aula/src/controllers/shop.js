@@ -79,7 +79,7 @@ exports.getCartProducts = (request, response, next) => {
             productCSS: true,
             hasProductsInsideCart: products.length > 0,
             numberOfProducts: products.length,
-            products: products,
+            products: products.map((product) => product.dataValues),
             totalPrice: 0,
           };
 
@@ -91,16 +91,36 @@ exports.getCartProducts = (request, response, next) => {
 };
 
 exports.postCartAddProduct = (request, response, next) => {
-  // const { productId, productPrice } = request.body;
-  // Product.findById(productId, (product) => {
-  //   if (product.success) {
-  //     Cart.addProduct({ productId, productPrice }, () => {
-  //       response.redirect('/cart');
-  //     });
-  //   } else {
-  //     response.redirect('/cart');
-  //   }
-  // });
+  const { productId } = request.body;
+  let fetchedCart;
+
+  request.user
+    .getCart()
+    .then((cart) => {
+      fetchedCart = cart;
+      return cart.getProducts({ where: { id: productId } });
+    })
+    .then((products) => {
+      console.log(products);
+      let product;
+      let newQuantity = 1;
+      if (products.length > 0) {
+        product = products[0].dataValues;
+      } else {
+      }
+
+      return Product.findByPk(productId)
+        .then((product) => {
+          return fetchedCart.addProduct(product, {
+            through: { quantity: newQuantity },
+          });
+        })
+        .catch((err) => console.log(err));
+    })
+    .then(() => {
+      response.redirect('/cart');
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.postCartDeleteProduct = (request, response, next) => {
