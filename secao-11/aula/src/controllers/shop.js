@@ -5,7 +5,6 @@ exports.getProducts = (request, response, next) => {
   request.user
     .getProducts()
     .then((result) => {
-      console.log(result);
       const hasProducts = result.length > 0;
       const products = result.map((product) => product.dataValues);
       const data = {
@@ -73,8 +72,6 @@ exports.getCartProducts = (request, response, next) => {
       return cart
         .getProducts()
         .then((products) => {
-          console.log(products);
-
           const data = {
             pageTitle: 'Your cart',
             activeCart: true,
@@ -138,15 +135,19 @@ exports.postCartAddProduct = (request, response, next) => {
 exports.postCartDeleteProduct = (request, response, next) => {
   const { productId, productPrice, quantity } = request.body;
 
-  Cart.isProductExist({ productId }, (result) => {
-    if (result.isExist) {
-      Cart.deleteProduct({ productId, productPrice, quantity }, () => {
-        response.redirect('/cart');
-      });
-    } else {
+  request.user
+    .getCart()
+    .then((cart) => {
+      return cart.getProducts({ where: { id: productId } });
+    })
+    .then((products) => {
+      const product = products[0];
+      return product.cartItem.destroy();
+    })
+    .then((result) => {
       response.redirect('/cart');
-    }
-  });
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getCheckout = (request, response, next) => {
