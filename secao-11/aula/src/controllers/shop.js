@@ -169,3 +169,29 @@ exports.getOrders = (request, response, next) => {
 
   response.render('shop/orders', data);
 };
+
+exports.postOrders = (request, response, next) => {
+  request.user
+    .getCart()
+    .then((cart) => {
+      return cart.getProducts();
+    })
+    .then((products) => {
+      return request.user
+        .createOrder()
+        .then((order) => {
+          const productsFormatted = products.map((product) => {
+            product.orderItem = {
+              quantity: product.cartItem.dataValues.quantity,
+            };
+          });
+
+          order.addProducts(productsFormatted);
+        })
+        .catch((err) => console.log(err));
+    })
+    .then(() => {
+      response.redirect('/checkout');
+    })
+    .catch((err) => console.log(err));
+};
