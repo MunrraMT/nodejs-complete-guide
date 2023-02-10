@@ -161,6 +161,36 @@ exports.getCheckout = (request, response, next) => {
 };
 
 exports.getOrders = (request, response, next) => {
+  request.user
+    .getOrders()
+    .then((orders) => {
+      return orders.map((order) => {
+        return order.getProducts().then((products) => products);
+      });
+    })
+    .then((products) => {
+      console.log(products);
+
+      // const data = {
+      //   pageTitle: 'Your Orders',
+      //   activeCart: true,
+      //   productCSS: true,
+      //   hasProductsInsideOrder: products.length > 0,
+      //   numberOfProducts: products.length,
+      //   products: products.map((product) => ({
+      //     ...product.dataValues,
+      //     quantity: product.cartItem.dataValues.quantity,
+      //   })),
+      //   totalPrice: products.reduce((acc, product) => {
+      //     return (acc +=
+      //       product.dataValues.price * product.cartItem.dataValues.quantity);
+      //   }, 0),
+      // };
+
+      // response.render('shop/orders', data);
+    })
+    .catch((err) => console.log(err));
+
   const data = {
     pageTitle: 'Your orders',
     activeOrders: true,
@@ -171,9 +201,11 @@ exports.getOrders = (request, response, next) => {
 };
 
 exports.postOrders = (request, response, next) => {
+  let fetchedCart;
   request.user
     .getCart()
     .then((cart) => {
+      fetchedCart = cart;
       return cart.getProducts();
     })
     .then((products) => {
@@ -188,11 +220,14 @@ exports.postOrders = (request, response, next) => {
             return product;
           });
 
-          order.addProducts(productsFormatted);
+          return order.addProducts(productsFormatted);
         })
         .catch((err) => console.log(err));
     })
-    .then(() => {
+    .then((result) => {
+      return fetchedCart.setProducts(null);
+    })
+    .then((result) => {
       response.redirect('/checkout');
     })
     .catch((err) => console.log(err));
