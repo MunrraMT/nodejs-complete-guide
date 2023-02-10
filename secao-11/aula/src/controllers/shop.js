@@ -182,8 +182,10 @@ exports.postOrders = (request, response, next) => {
         .then((order) => {
           const productsFormatted = products.map((product) => {
             product.orderItem = {
-              quantity: product.cartItem.dataValues.quantity,
+              quantity: product.cartItem.quantity,
             };
+
+            return product;
           });
 
           order.addProducts(productsFormatted);
